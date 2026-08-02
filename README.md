@@ -16,11 +16,6 @@ This project is being documented publicly throughout development.
 This project assumes familiarity with Monte Carlo simulation,
 probability estimation, and statistical convergence.
 
-The foundational experiments that motivated this project are
-available in the Monte Carlo Playground repository: 
-
-(insert Monte Carlo playground repo here)
-
 ## Overview
 Rare events occur infrequently but often have outsized consequences.
 
