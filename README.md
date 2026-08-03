@@ -10,7 +10,7 @@ This project is being documented publicly throughout development.
 
 #### 📱 Development shorts/reels
 
-#### ✍️ Technical Substack articles
+#### ✍️ Substack articles
 
 ## Background Knowledge:
 This project assumes familiarity with Monte Carlo simulation,
