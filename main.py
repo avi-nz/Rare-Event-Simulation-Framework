@@ -1,10 +1,12 @@
 """
 main.py — interactive CLI for the rare-event-simulation estimators.
 
-pick an estimator, pick the problem parameters, run it, see the results.
+Mirrors the choose_model()/choose_season() pattern: pick an estimator,
+pick the problem parameters, run it, see the results.
 """
 
 from scipy import stats
+
 from src.rare_event_sim.estimators.crude_mc import CrudeMonteCarlo
 
 
@@ -34,6 +36,16 @@ def choose_estimator():
     return estimator_name, estimator_class
 
 
+def _is_float(s):
+    """True if s parses as a float. Used as the loop condition below,
+    not a loop itself — keeps choose_threshold() a plain while-until."""
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
 def choose_threshold():
     """
     Prompt the user for the tail threshold t, estimating P(X > t) for X ~ N(0,1).
@@ -41,11 +53,9 @@ def choose_threshold():
         float: The threshold.
     """
     raw = input("\nEnter threshold t, for P(X > t) with X ~ N(0,1) (e.g. 3.0): ").strip()
-    while True:
-        try:
-            return float(raw)
-        except ValueError:
-            raw = input(f"  Invalid threshold '{raw}'. Enter a number: ").strip()
+    while not _is_float(raw):
+        raw = input(f"  Invalid threshold '{raw}'. Enter a number: ").strip()
+    return float(raw)
 
 
 def choose_n():
@@ -55,10 +65,14 @@ def choose_n():
         int: n, must be >= 2.
     """
     raw = input("\nEnter number of samples n (e.g. 100000): ").strip()
-    while True:
-        if raw.isdigit() and int(raw) >= 2:
-            return int(raw)
+    while not (raw.isdigit() and int(raw) >= 2):
         raw = input("  n must be a whole number >= 2. Enter n: ").strip()
+    return int(raw)
+
+
+def _is_valid_re(s):
+    """True if s parses as a float strictly between 0 and 1."""
+    return _is_float(s) and 0 < float(s) < 1
 
 
 def choose_target_re():
@@ -70,14 +84,9 @@ def choose_target_re():
     raw = input("\nTarget relative error, e.g. 0.1 (press Enter to skip): ").strip()
     if raw == "":
         return None
-    while True:
-        try:
-            val = float(raw)
-            if 0 < val < 1:
-                return val
-        except ValueError:
-            pass
+    while not _is_valid_re(raw):
         raw = input("  Must be a number between 0 and 1, or blank to skip: ").strip()
+    return float(raw)
 
 
 def choose_seed():
@@ -124,7 +133,6 @@ def run_crude_mc(threshold, n, seed, target_re, level=0.95):
 
 
 def main():
-    print("=== Rare Event Simulation Framework ===")
     estimator_name, estimator_class = choose_estimator()
     threshold = choose_threshold()
     n = choose_n()
